@@ -1,5 +1,7 @@
 package br.com.serttel.semaforosrecife;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -8,6 +10,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.util.JsonReader;
@@ -17,10 +20,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarkerClickListener,
+        OnMapReadyCallback {
 
     private GoogleMap mMap;
-    //private Semaforo[] semaforos;
+    private Semaforo[] semaforos;
     String linkStart, linkNext;
     int limit, total;
 
@@ -57,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         **/
 
 
-        //semaforos = new Semaforo[50];
+        semaforos = new Semaforo[50];
         try {
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(getAssets().open("dadosRecifeSemaforo.json")));
             JsonReader jsonReader = new JsonReader(fileReader); //classe que reconhece arquivo como json
@@ -72,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng central = new LatLng(-8.082688,-34.906625);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(12f));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(central));
+
+        mMap.setOnMarkerClickListener(this);
     }
 
     public void parseJSON (JsonReader jsonReader){
@@ -131,10 +137,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             else if (nextNameObj.equals("_id")){
                                 _id = jsonReader.nextInt();
                                 loop = false;
-                                //semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss, sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
+                                semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss, sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
 
                                 LatLng pos = new LatLng(lt, lg);
-                                mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo " +sem));
+
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo #" + sem));
+                                marker.setTag(i);
 
                                 i++;
                             }
@@ -155,7 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         total = jsonReader.nextInt();
                     }
                     else{
-                        System.out.println("WHAT ARE YOU DOING HERE");
+                        //nao acho que tem como entrar aqui
                     }
 
                 }
@@ -178,5 +186,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
 
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker){
+
+        Integer id = (Integer) marker.getTag();
+
+        AlertDialog.Builder builder =  new AlertDialog.Builder(this);
+        builder.setMessage(semaforos[id].prettyInfo())
+                .setTitle("Informacoes do semaforo");
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        return false;
     }
 }

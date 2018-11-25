@@ -109,4 +109,13 @@ public class Semaforo {
     public void setUtilizacao(String utilizacao) {
         this.utilizacao = utilizacao;
     }
+
+    public String prettyInfo(){
+
+        return "Semaforo #" + semaforo + "\n" +
+                localizacao1 + "\n" +
+                localizacao2 + "\n" +
+                "Utilizacao: " + utilizacao + "\n" +
+                "Posicao: (" + latidude + "," + longitude + ")";
+    }
 }
