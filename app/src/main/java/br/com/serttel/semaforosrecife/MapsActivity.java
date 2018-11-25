@@ -1,7 +1,6 @@
 package br.com.serttel.semaforosrecife;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -52,15 +51,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /*DEMO SYDNEY, AUSTRALIA
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        **/
-
-
         semaforos = new Semaforo[50];
         try {
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(getAssets().open("dadosRecifeSemaforo.json")));
@@ -82,7 +72,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
 
     public void parseJSON (JsonReader jsonReader){
 
-        String ut = null, loc1 =  null, loc2 = null, func = null, ss = null, sc = null;
+        String ut, loc1 =  null, loc2 = null, func = null, ss = null, sc = null;
         int sem = 0, _id = 0, i = 0;
         double lg = 0, lt = 0;
 
@@ -94,11 +84,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
                 if (jsonReader.peek().equals(JsonToken.NAME)) {
                     String nextName = jsonReader.nextName();
 
-                    if(nextName.equals("records")){
-                        //na verdade não faz nada exatamente
-                    }
-
-                    else if(nextName.equals("utilizacao")) {
+                    if(nextName.equals("utilizacao")) {
                         /*"records" eh o nome do array de semaforos.
                          * nao sendo ele, ja eh o primeiro atributo de um semaforo
                          */
@@ -161,9 +147,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
                     }
                     else if(nextName.equals("total")){
                         total = jsonReader.nextInt();
-                    }
-                    else{
-                        //nao acho que tem como entrar aqui
                     }
 
                 }
