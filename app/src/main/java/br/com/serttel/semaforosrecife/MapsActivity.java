@@ -20,7 +20,9 @@ import java.io.InputStreamReader;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Semaforo[] semaforos;
+    //private Semaforo[] semaforos;
+    String linkStart, linkNext;
+    int limit, total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,27 +54,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        **/
 
-         */
 
-        semaforos = new Semaforo[50];
+        //semaforos = new Semaforo[50];
         try {
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(getAssets().open("dadosRecifeSemaforo.json")));
             JsonReader jsonReader = new JsonReader(fileReader); //classe que reconhece arquivo como json
             parseJSON(jsonReader);
-
-            for(int i=0; i<50; i++){
-                LatLng pos = new LatLng(semaforos[i].getLatidude(), semaforos[i].getLongitude());
-                mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo " + semaforos[i].getSemaforo()));
-
-                if(i==24) mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
-            }
-
+            jsonReader.close();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
+        //ponto mais central
+        LatLng central = new LatLng(-8.082688,-34.906625);
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(12f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(central));
     }
 
     public void parseJSON (JsonReader jsonReader){
@@ -89,14 +88,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (jsonReader.peek().equals(JsonToken.NAME)) {
                     String nextName = jsonReader.nextName();
 
-                    if(nextName.equals("utilizacao")) {
+                    if(nextName.equals("records")){
+                        //na verdade não faz nada exatamente
+                    }
+
+                    else if(nextName.equals("utilizacao")) {
                         /*"records" eh o nome do array de semaforos.
                          * nao sendo ele, ja eh o primeiro atributo de um semaforo
                          */
 
                         ut = jsonReader.nextString();
-
-                        System.out.println("UT DONE");
 
                         boolean loop = true;
                         while(loop){
@@ -130,12 +131,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             else if (nextNameObj.equals("_id")){
                                 _id = jsonReader.nextInt();
                                 loop = false;
-                                System.out.println("ID DONE AND LOOP NOW FALSE");
-                                semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss, sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
+                                //semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss, sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
+
+                                LatLng pos = new LatLng(lt, lg);
+                                mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo " +sem));
+
                                 i++;
                             }
                         }
                     }
+                    else if(nextName.equals("_links")){
+                        jsonReader.beginObject();
+                        jsonReader.nextName();
+                        linkStart = jsonReader.nextString();
+                        jsonReader.nextName();
+                        linkNext = jsonReader.nextString();
+                        jsonReader.endObject();
+                    }
+                    else if(nextName.equals("limit")){
+                        limit = jsonReader.nextInt();
+                    }
+                    else if(nextName.equals("total")){
+                        total = jsonReader.nextInt();
+                    }
+                    else{
+                        System.out.println("WHAT ARE YOU DOING HERE");
+                    }
+
                 }
                 else if (jsonReader.peek().equals(JsonToken.BEGIN_ARRAY)) {
                     jsonReader.beginArray();
