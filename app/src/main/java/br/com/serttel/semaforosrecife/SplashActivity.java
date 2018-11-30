@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 public class SplashActivity extends Activity {
 
@@ -12,6 +15,11 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        if(!isOnline()){
+            Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
+        }
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -27,5 +35,22 @@ public class SplashActivity extends Activity {
         );
         startActivity(intent);
         finish();
+    }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+
+        Process ipProcess = null;
+        try {
+            ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+
+            return (exitValue == 0);
+        }
+        catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

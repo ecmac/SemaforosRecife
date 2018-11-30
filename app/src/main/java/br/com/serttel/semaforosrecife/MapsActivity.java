@@ -10,6 +10,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarkerClickListener,
         OnMapReadyCallback {
@@ -33,7 +34,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
 
         mMap = googleMap;
 
-        NetworkThread networkThread = new NetworkThread(mMap, linkStart, linkNext, limit, total);
+
+
+        NetworkThread networkThread = new NetworkThread(linkStart, linkNext, limit, total, getApplicationContext(), this);
         networkThread.start();
         try {
             networkThread.join();
@@ -41,12 +44,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
             e.printStackTrace();
         }
 
-        mMap = networkThread.getmMap();
         semaforos = networkThread.getSemaforos();
         linkStart = networkThread.getLinkStart();
         linkNext = networkThread.getLinkNext();
         limit = networkThread.getLimit();
         total = networkThread.getTotal();
+
+        System.out.println("TO STRING DO ARRAY DE SEMAFOROS DEPOIS DA THREAD");
+        System.out.println(semaforos.toString());
+
+        addToMap();
 
         //ponto mais central
         LatLng central = new LatLng(-8.082688,-34.906625);
@@ -70,6 +77,17 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
         dialog.show();
 
         return false;
+    }
+
+    public void addToMap(){
+
+        for(int i=0; i < 50; i++){
+            LatLng pos = new LatLng(semaforos[i].getLatidude(), semaforos[i].getLongitude());
+
+            Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo #" + semaforos[i].getSemaforo()));
+            marker.setTag(i);
+        }
+
     }
 
 }

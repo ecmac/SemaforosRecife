@@ -1,46 +1,39 @@
 package br.com.serttel.semaforosrecife;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class NetworkThread extends Thread {
 
-    private GoogleMap mMap;
     private Semaforo[] semaforos;
     private String linkStart;
     private String linkNext;
     private int limit, total;
+    private Context context;
+    private Activity activity;
 
-    public NetworkThread(GoogleMap mMap,String linkStart, String linkNext, int limit, int total){
-        this.mMap = mMap;
+    public NetworkThread(String linkStart, String linkNext, int limit, int total, Context context, Activity activity){
         this.semaforos = new Semaforo[50];
         this.linkStart = linkStart;
         this.linkNext = linkNext;
         this.limit = limit;
         this.total = total;
+        this.context = context;
+        this.activity = activity;
     }
 
     public Semaforo[] getSemaforos() {
         return semaforos;
-    }
-
-    public GoogleMap getmMap() {
-
-        return mMap;
     }
 
     public String getLinkNext() {
@@ -80,11 +73,33 @@ public class NetworkThread extends Thread {
                 JsonReader jsonReader = new JsonReader(bufferedReader); //classe que reconhece arquivo como json
                 parseJSON(jsonReader);
                 jsonReader.close();
+                isOnline = true;
 
             }
             catch (IOException e) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.",Toast.LENGTH_LONG);
+
+                e.printStackTrace();
+
+                /**
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(context, "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+
+
+                try {
+
+                    sleep(2000);
+                }
+                catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                 **/
             }
+
         }
 
 
@@ -145,10 +160,12 @@ public class NetworkThread extends Thread {
                                 loop = false;
                                 semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss, sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
 
+                                /**
                                 LatLng pos = new LatLng(lt, lg);
 
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo #" + sem));
                                 marker.setTag(i);
+                                 **/
 
                                 i++;
                             }
@@ -195,6 +212,9 @@ public class NetworkThread extends Thread {
     public void run() {
 
         jsonRequisition();
+
+        System.out.println("TO STRING DO ARRAY DE SEMAFOROS ANTES DE TERMINAR THREAD");
+        System.out.println(semaforos.toString());
 
     }
 }
