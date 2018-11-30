@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import static java.lang.Thread.sleep;
+
 public class SplashActivity extends Activity {
 
     @Override
@@ -16,22 +18,27 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        if(!isOnline()){
-            Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
-        }
-
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mostrarMainActivity();
+                mostrarLoadingActivity();
             }
         }, 2000);
+
+        /**while(!isOnline()){
+            Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }**/
     }
 
-    private void mostrarMainActivity() {
+    private void mostrarLoadingActivity() {
         Intent intent = new Intent(
-                SplashActivity.this,MapsActivity.class
+                SplashActivity.this,LoadingActivity.class
         );
         startActivity(intent);
         finish();

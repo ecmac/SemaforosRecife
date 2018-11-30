@@ -36,7 +36,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
 
 
 
-        NetworkThread networkThread = new NetworkThread(linkStart, linkNext, limit, total, getApplicationContext(), this);
+        NetworkThread networkThread =
+                new NetworkThread(linkStart, linkNext, limit, total, getApplicationContext(), this);
         networkThread.start();
         try {
             networkThread.join();
@@ -50,8 +51,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
         limit = networkThread.getLimit();
         total = networkThread.getTotal();
 
-        System.out.println("TO STRING DO ARRAY DE SEMAFOROS DEPOIS DA THREAD");
-        System.out.println(semaforos.toString());
+        /**System.out.println("TO STRING DO ARRAY DE SEMAFOROS DEPOIS DA THREAD");
+        System.out.println(semaforos.toString());**/
 
         addToMap();
 
@@ -84,7 +85,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
         for(int i=0; i < 50; i++){
             LatLng pos = new LatLng(semaforos[i].getLatidude(), semaforos[i].getLongitude());
 
-            Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo #" + semaforos[i].getSemaforo()));
+            Marker marker = mMap.addMarker
+                    (new MarkerOptions().position(pos).title("Semaforo #" + semaforos[i].getSemaforo()));
             marker.setTag(i);
         }
 

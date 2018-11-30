@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.JsonReader;
 import android.util.JsonToken;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,17 +18,18 @@ public class NetworkThread extends Thread {
     private String linkStart;
     private String linkNext;
     private int limit, total;
-    private Context context;
-    private Activity activity;
+    //private Context context;
+    //private Activity activity;
 
-    public NetworkThread(String linkStart, String linkNext, int limit, int total, Context context, Activity activity){
+    public NetworkThread(String linkStart, String linkNext, int limit,
+                         int total, Context context, Activity activity){
         this.semaforos = new Semaforo[50];
         this.linkStart = linkStart;
         this.linkNext = linkNext;
         this.limit = limit;
         this.total = total;
-        this.context = context;
-        this.activity = activity;
+        //this.context = context;
+        //this.activity = activity;
     }
 
     public Semaforo[] getSemaforos() {
@@ -68,7 +68,8 @@ public class NetworkThread extends Thread {
                 httpConnection.connect(); //conexao http para acessar o arquivo
 
                 InputStream inputStream = httpConnection.getInputStream();
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream)); //obter o arquivo a partir da conexao
+                bufferedReader = new BufferedReader
+                        (new InputStreamReader(inputStream)); //obter o arquivo a partir da conexao
 
                 JsonReader jsonReader = new JsonReader(bufferedReader); //classe que reconhece arquivo como json
                 parseJSON(jsonReader);
@@ -158,12 +159,14 @@ public class NetworkThread extends Thread {
                             else if (nextNameObj.equals("_id")){
                                 _id = jsonReader.nextInt();
                                 loop = false;
-                                semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss, sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
+                                semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss,
+                                        sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
 
                                 /**
                                 LatLng pos = new LatLng(lt, lg);
 
-                                Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title("Semaforo #" + sem));
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(pos)
+                                 .title("Semaforo #" + sem));
                                 marker.setTag(i);
                                  **/
 
@@ -213,8 +216,8 @@ public class NetworkThread extends Thread {
 
         jsonRequisition();
 
-        System.out.println("TO STRING DO ARRAY DE SEMAFOROS ANTES DE TERMINAR THREAD");
-        System.out.println(semaforos.toString());
+        /**System.out.println("TO STRING DO ARRAY DE SEMAFOROS ANTES DE TERMINAR THREAD");
+        System.out.println(semaforos.toString());**/
 
     }
 }
