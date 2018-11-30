@@ -1,7 +1,6 @@
 package br.com.serttel.semaforosrecife;
 
 import android.app.AlertDialog;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -19,7 +18,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
     private Semaforo[] semaforos;
     String linkStart, linkNext;
     int limit, total;
-    boolean mapReady = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +47,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
         linkNext = networkThread.getLinkNext();
         limit = networkThread.getLimit();
         total = networkThread.getTotal();
-
-        //semaforos = new Semaforo[50];
-
-        //jsonRequisition();
 
         //ponto mais central
         LatLng central = new LatLng(-8.082688,-34.906625);

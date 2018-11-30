@@ -1,8 +1,8 @@
 package br.com.serttel.semaforosrecife;
 
-import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.JsonToken;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -66,25 +66,28 @@ public class NetworkThread extends Thread {
         HttpURLConnection httpConnection = null;
         BufferedReader bufferedReader = null;
 
-        try {
-            URL url = new URL("http://desafio.serttel.com.br/dadosRecifeSemaforo.json");
-            httpConnection = (HttpURLConnection) url.openConnection();
-            httpConnection.connect(); //conexao http para acessar o arquivo
+        boolean isOnline = false;
 
-            InputStream inputStream = httpConnection.getInputStream();
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream)); //obter o arquivo a partir da conexao
+        while(!isOnline){
+            try {
+                URL url = new URL("http://desafio.serttel.com.br/dadosRecifeSemaforo.json");
+                httpConnection = (HttpURLConnection) url.openConnection();
+                httpConnection.connect(); //conexao http para acessar o arquivo
 
-            JsonReader jsonReader = new JsonReader(bufferedReader); //classe que reconhece arquivo como json
-            parseJSON(jsonReader);
-            jsonReader.close();
+                InputStream inputStream = httpConnection.getInputStream();
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream)); //obter o arquivo a partir da conexao
 
+                JsonReader jsonReader = new JsonReader(bufferedReader); //classe que reconhece arquivo como json
+                parseJSON(jsonReader);
+                jsonReader.close();
+
+            }
+            catch (IOException e) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.",Toast.LENGTH_LONG);
+            }
         }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
     }
 
     private void parseJSON (JsonReader jsonReader){
