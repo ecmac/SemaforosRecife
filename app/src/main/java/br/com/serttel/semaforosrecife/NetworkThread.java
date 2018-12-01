@@ -59,51 +59,22 @@ public class NetworkThread extends Thread {
         HttpURLConnection httpConnection = null;
         BufferedReader bufferedReader = null;
 
-        boolean isOnline = false;
+        try {
+            URL url = new URL("http://desafio.serttel.com.br/dadosRecifeSemaforo.json");
+            httpConnection = (HttpURLConnection) url.openConnection();
+            httpConnection.connect(); //conexao http para acessar o arquivo
 
-        while(!isOnline){
-            try {
-                URL url = new URL("http://desafio.serttel.com.br/dadosRecifeSemaforo.json");
-                httpConnection = (HttpURLConnection) url.openConnection();
-                httpConnection.connect(); //conexao http para acessar o arquivo
+            InputStream inputStream = httpConnection.getInputStream();
+            bufferedReader = new BufferedReader
+                    (new InputStreamReader(inputStream)); //obter o arquivo a partir da conexao
 
-                InputStream inputStream = httpConnection.getInputStream();
-                bufferedReader = new BufferedReader
-                        (new InputStreamReader(inputStream)); //obter o arquivo a partir da conexao
-
-                JsonReader jsonReader = new JsonReader(bufferedReader); //classe que reconhece arquivo como json
-                parseJSON(jsonReader);
-                jsonReader.close();
-                isOnline = true;
-
-            }
-            catch (IOException e) {
-
-                e.printStackTrace();
-
-                /**
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(context, "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-
-
-
-                try {
-
-                    sleep(2000);
-                }
-                catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-                 **/
-            }
-
+            JsonReader jsonReader = new JsonReader(bufferedReader); //classe que reconhece arquivo como json
+            parseJSON(jsonReader);
+            jsonReader.close();
         }
-
-
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void parseJSON (JsonReader jsonReader){
@@ -129,7 +100,6 @@ public class NetworkThread extends Thread {
 
                         boolean loop = true;
                         while(loop){
-
                             String nextNameObj = jsonReader.nextName();
 
                             if (nextNameObj.equals("localizacao1")){
@@ -161,15 +131,6 @@ public class NetworkThread extends Thread {
                                 loop = false;
                                 semaforos[i] = new Semaforo(ut, loc1, loc2, func, ss,
                                         sem, sc, lg, lt, _id); //cria novo semaforo e adiciona ao array
-
-                                /**
-                                LatLng pos = new LatLng(lt, lg);
-
-                                Marker marker = mMap.addMarker(new MarkerOptions().position(pos)
-                                 .title("Semaforo #" + sem));
-                                marker.setTag(i);
-                                 **/
-
                                 i++;
                             }
                         }
@@ -207,17 +168,10 @@ public class NetworkThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
     public void run() {
-
         jsonRequisition();
-
-        /**System.out.println("TO STRING DO ARRAY DE SEMAFOROS ANTES DE TERMINAR THREAD");
-        System.out.println(semaforos.toString());**/
-
     }
 }

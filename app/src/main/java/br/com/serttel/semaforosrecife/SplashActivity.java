@@ -24,16 +24,19 @@ public class SplashActivity extends Activity {
             public void run() {
                 mostrarLoadingActivity();
             }
-        }, 2000);
+        }, 1500);
 
-        /**while(!isOnline()){
-            Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
+        /**
+        while(!isOnline()){
+            Toast.makeText(getApplicationContext(), "Erro ao conectar. " +
+                    "Verifique a internet.", Toast.LENGTH_LONG).show();
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }**/
+        }
+         **/
     }
 
     private void mostrarLoadingActivity() {
@@ -44,20 +47,5 @@ public class SplashActivity extends Activity {
         finish();
     }
 
-    public boolean isOnline() {
-        Runtime runtime = Runtime.getRuntime();
 
-        Process ipProcess = null;
-        try {
-            ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int exitValue = ipProcess.waitFor();
-
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
 }

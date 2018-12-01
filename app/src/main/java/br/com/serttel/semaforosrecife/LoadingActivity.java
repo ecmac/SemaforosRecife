@@ -1,11 +1,16 @@
 package br.com.serttel.semaforosrecife;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
-public class LoadingActivity extends AppCompatActivity {
+import java.io.IOException;
+
+import static java.lang.Thread.sleep;
+
+public class LoadingActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,25 +21,44 @@ public class LoadingActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mostrarMainActivity();
+                mostrarMapsActivity();
             }
         }, 2000);
-
-        /**while(!isOnline()){
-         Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
-         try {
-         sleep(1000);
-         } catch (InterruptedException e) {
-         e.printStackTrace();
-         }
-         }**/
     }
 
-    private void mostrarMainActivity() {
+    private void mostrarMapsActivity() {
+
+        while(!isOnline()){
+            Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
+            try {
+                sleep(1000);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         Intent intent = new Intent(
                 LoadingActivity.this,MapsActivity.class
         );
         startActivity(intent);
         finish();
+    }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+
+        Process ipProcess = null;
+        try {
+            ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+
+            return (exitValue == 0);
+        }
+        catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

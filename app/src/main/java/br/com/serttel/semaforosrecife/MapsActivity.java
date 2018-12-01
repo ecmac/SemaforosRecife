@@ -27,17 +27,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this); }
+        mapFragment.getMapAsync(this);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
 
-
-
-        NetworkThread networkThread =
-                new NetworkThread(linkStart, linkNext, limit, total, getApplicationContext(), this);
+        NetworkThread networkThread = new NetworkThread
+                (linkStart, linkNext, limit, total, getApplicationContext(), this);
         networkThread.start();
         try {
             networkThread.join();
@@ -51,9 +50,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
         limit = networkThread.getLimit();
         total = networkThread.getTotal();
 
-        /**System.out.println("TO STRING DO ARRAY DE SEMAFOROS DEPOIS DA THREAD");
-        System.out.println(semaforos.toString());**/
-
         addToMap();
 
         //ponto mais central
@@ -63,8 +59,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
 
         mMap.setOnMarkerClickListener(this);
     }
-
-
 
     @Override
     public boolean onMarkerClick(final Marker marker){
@@ -89,7 +83,5 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMarker
                     (new MarkerOptions().position(pos).title("Semaforo #" + semaforos[i].getSemaforo()));
             marker.setTag(i);
         }
-
     }
-
 }
