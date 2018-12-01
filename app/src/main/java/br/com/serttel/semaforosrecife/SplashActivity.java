@@ -5,11 +5,6 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.widget.Toast;
-
-import java.io.IOException;
-
-import static java.lang.Thread.sleep;
 
 public class SplashActivity extends Activity {
 
@@ -25,18 +20,6 @@ public class SplashActivity extends Activity {
                 mostrarLoadingActivity();
             }
         }, 1500);
-
-        /**
-        while(!isOnline()){
-            Toast.makeText(getApplicationContext(), "Erro ao conectar. " +
-                    "Verifique a internet.", Toast.LENGTH_LONG).show();
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-         **/
     }
 
     private void mostrarLoadingActivity() {

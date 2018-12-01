@@ -29,9 +29,8 @@ public class LoadingActivity extends Activity {
     private void mostrarMapsActivity() {
 
         while(!isOnline()){
-            Toast.makeText(getApplicationContext(), "Erro ao conectar. Verifique a internet.", Toast.LENGTH_LONG).show();
             try {
-                sleep(1000);
+                sleep(1500);
             }
             catch (InterruptedException e) {
                 e.printStackTrace();

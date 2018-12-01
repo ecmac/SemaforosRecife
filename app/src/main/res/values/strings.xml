@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">SemaforosRecife</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="carregando">Carregando...</string>
+    <string name="title_activity_maps">MapaSemaforosRecife</string>
+    <string name="carregando">Carregando…\n(Caso demore muito, verifique sua conexão com a internet.)</string>
 </resources>
